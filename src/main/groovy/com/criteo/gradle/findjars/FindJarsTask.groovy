@@ -68,12 +68,12 @@ class FindJarsTask extends DefaultTask {
                     logger.lifecycle("- $it")
                 }
                 logger.lifecycle("conflict on: ")
-                displayConflictingClasses(entry.getValue())
+                reportConflictingClasses(entry.getValue())
             }
         }
     }
 
-    private void displayConflictingClasses(Collection<String> conflictingClasses) {
+    private void reportConflictingClasses(Collection<String> conflictingClasses) {
         int length = conflictingClasses.size()
         int maxClasses = 5
         boolean addThreeDots = length > maxClasses
