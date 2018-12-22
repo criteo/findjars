@@ -1,16 +1,11 @@
 package com.criteo.gradle.findjars
 
-import com.criteo.gradle.findjars.lookup.ConflictingJars
-import com.criteo.gradle.findjars.lookup.JarFileAndEntry
-import com.criteo.gradle.findjars.lookup.JarFileAndPath
+import com.criteo.gradle.findjars.lookup.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
-import org.gradle.internal.impldep.org.apache.commons.codec.digest.DigestUtils
-
-import java.util.jar.JarEntry
 
 class FindJarsTask extends DefaultTask {
 
@@ -39,7 +34,7 @@ class FindJarsTask extends DefaultTask {
 
     @TaskAction
     void run() {
-        Collection<JarFileAndEntry> jarFileAndEntry = com.criteo.gradle.findjars.lookup.JarsHavingEntriesMatchingFilter.collect(project, logger, jarFilter)
+        Collection<JarFileAndEntry> jarFileAndEntry = JarsHavingEntriesMatchingFilter.collect(project, logger, jarFilter)
         if (findConflicts) {
             reportConflicts(jarFileAndEntry)
         }
@@ -59,11 +54,11 @@ class FindJarsTask extends DefaultTask {
     }
 
     private void reportConflicts(Collection<JarFileAndEntry> jarFileAndEntry) {
-        Map<String, Set<String>> conflicts = findElementsInMultipleJars(jarFileAndEntry)
+        Map<String, Set<String>> conflicts = Conflicts.entriesInMultipleJars(jarFileAndEntry)
         if (conflicts.isEmpty()) {
             logger.lifecycle("No conflicts found.")
         } else {
-            Map<ConflictingJars, Set<String>> factorizedConflicts = factorizeConflicts(conflicts)
+            Map<ConflictingJars, Set<String>> factorizedConflicts = Conflicts.factorize(conflicts)
             for (Map.Entry<ConflictingJars, Set<String>> entry: factorizedConflicts) {
                 Set<String> jars = entry.getKey().getJars()
                 logger.lifecycle("Jars:")
@@ -87,63 +82,6 @@ class FindJarsTask extends DefaultTask {
         if (addThreeDots) {
             logger.lifecycle(" - ... (${length - maxClasses} more)")
         }
-    }
-
-    /**
-     * @param entries
-     * @return entries having the same path (inside a jar), but different content in different jars.
-     */
-    private Map<String, Set<String>> findElementsInMultipleJars(Collection<JarFileAndEntry> entries) {
-        Map<String, Set<JarFileAndEntry>> entriesToJars = findEntriesWithSamePathInDifferentJars(entries)
-        Map<String, Map<Long, JarFileAndPath>> entriesPerDigest = new HashMap<>()
-        for (Map.Entry<String, Set<JarFileAndEntry>> entryToJars: entriesToJars) {
-            Map<String, Set<JarFileAndPath>> jarsGroupedByEntriesDigest = new HashMap<>()
-            for (JarFileAndEntry entry : entryToJars.getValue()) {
-                String digest = getDigest(entry.getJarFile(), entry.getJarEntry())
-                Set<JarFileAndPath> related = jarsGroupedByEntriesDigest.getOrDefault(digest, new HashSet<>())
-                related.add(entry.getJarFile())
-                jarsGroupedByEntriesDigest[digest] = related
-            }
-            entriesPerDigest[entryToJars.getKey()] = jarsGroupedByEntriesDigest
-        }
-        entriesPerDigest.findAll { className, perDigest ->
-            perDigest.keySet().size() > 1
-        }.collectEntries { key, value ->
-            Collection<Set<JarFileAndPath>> values = value.values()
-            Set<String> paths = values.collectMany { val -> val.collect { it.getJarPath() } }
-            [(key): paths]
-        }
-    }
-
-    private Map<String, Set<JarFileAndEntry>> findEntriesWithSamePathInDifferentJars(Collection<JarFileAndEntry> entries) {
-        Map<String, Set<JarFileAndEntry>> elementsToJars = new HashMap<>()
-        for (JarFileAndEntry entry : entries) {
-            String key = entry.getJarEntry().getName()
-            Set<JarFileAndEntry> related = elementsToJars.getOrDefault(key, new HashSet<>())
-            related.add(entry)
-            elementsToJars[key] = related
-        }
-        elementsToJars.findAll {
-            key, value -> value.size() > 1
-        }
-    }
-
-    private static String getDigest(JarFileAndPath jar, JarEntry entry) {
-        return new BufferedInputStream(jar.getJarFile().getInputStream(entry)).withCloseable { input ->
-            DigestUtils.sha1Hex(input)
-        }
-    }
-
-    private Map<ConflictingJars, Collection<String>> factorizeConflicts(Map<String, Set<String>> conflicts) {
-        Map<ConflictingJars, Collection<String>> res = new HashMap<>()
-        conflicts.each {
-            key, value ->
-                ConflictingJars newKey = new ConflictingJars(value)
-                Collection<String> related = res.getOrDefault(newKey, [])
-                related.add(key)
-                res[newKey] = related
-        }
-        res
     }
 
     private void setupDefaultOptions() {
