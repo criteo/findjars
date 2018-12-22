@@ -39,7 +39,7 @@ class FindJarsTask extends DefaultTask {
 
     @TaskAction
     void run() {
-        Collection<JarFileAndEntry> jarFileAndEntry = collectJarFileAndEntry()
+        Collection<JarFileAndEntry> jarFileAndEntry = com.criteo.gradle.findjars.lookup.JarsHavingEntriesMatchingFilter.collect(project, logger, jarFilter)
         if (findConflicts) {
             reportConflicts(jarFileAndEntry)
         }
@@ -161,37 +161,6 @@ class FindJarsTask extends DefaultTask {
         if (configuration == null) {
             configuration = "compile"
         }
-    }
-
-    private Collection<JarFileAndEntry> collectJarFileAndEntry() {
-        Collection<JarFileAndEntry> res = new ArrayList<>()
-        if (project.configurations.findAll { it.name == configuration }.isEmpty()) {
-            return res
-        }
-        for (String path : project.configurations.getByName(configuration).files*.path) {
-            if (!new File(path).exists() || !path.endsWith(".jar")) {
-                continue
-            }
-            try {
-                JarFileAndPath jar = new JarFileAndPath(path);
-                Enumeration<JarEntry> entries = jar.getJarFile().entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    String name = entry.getName();
-                    if (filterJarName(name)) {
-                        res.add(new JarFileAndEntry(jar, entry))
-                        continue
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("Could not open ${path}", e)
-            }
-        }
-        res
-    }
-
-    private boolean filterJarName(String name) {
-        return name.matches(jarFilter)
     }
 
 }
