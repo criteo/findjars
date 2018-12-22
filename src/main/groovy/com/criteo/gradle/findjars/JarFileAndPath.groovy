@@ -24,7 +24,7 @@ class JarFileAndPath {
         if (this.is(o)) return true
         if (getClass() != o.class) return false
 
-        FindJarsTask.JarFileAndPath that = (FindJarsTask.JarFileAndPath) o
+        JarFileAndPath that = (JarFileAndPath) o
 
         if (jarFile != that.jarFile) return false
         if (jarPath != that.jarPath) return false

@@ -191,29 +191,6 @@ class FindJarsTask extends DefaultTask {
         return name.matches(jarFilter)
     }
 
-    private class JarFileAndEntry {
-        private JarFileAndPath jar
-        private JarEntry entry
-
-        JarFileAndEntry(JarFileAndPath jar, JarEntry entry) {
-            this.jar = jar
-            this.entry = entry
-        }
-
-        JarFileAndPath getJarFile() {
-            this.jar
-        }
-
-        JarEntry getJarEntry() {
-            this.entry
-        }
-
-        String getJarPath() {
-            this.jar.getJarPath()
-        }
-
-    }
-
     private class ConflictingJars {
         Set<String> conflictingJars
         int hash
