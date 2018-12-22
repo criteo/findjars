@@ -1,0 +1,61 @@
+/*
+ * TODO
+ * ex: the one used at https://github.com/nebula-plugins/gradle-lint-plugin/blob/master/build.gradle
+ *
+ * Copyright 2014-2017 Netflix, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+plugins {
+    id 'java-gradle-plugin'
+}
+
+apply plugin:'groovy'
+
+def descriptionText = 'Tool for finding jars in a given configuration.'
+description descriptionText
+
+dependencies {
+    compileOnly gradleApi()
+    compileOnly localGroovy()
+}
+
+gradlePlugin {
+    plugins {
+        workspace {
+            id = 'com.criteo.gradle.findjars'
+            implementationClass = 'com.criteo.gradle.WorkspacePlugin'
+        }
+    }
+}
+
+/*pluginBundle {
+    website = 'TODO'
+    vcsUrl = 'TODO'
+    description = descriptionText
+
+    mavenCoordinates {
+        groupId = 'com.criteo.gradle'
+        artifactId = 'findjars'
+    }
+ }*/
+
+// Kotlin compiles first, stubbing Java dependencies, however it can't stub Groovy and we need to call Groovy code from Kotlin. For details see:
+// https://discuss.gradle.org/t/kotlin-groovy-and-java-compilation/14903/10
+/*if (GradleVersion.version(project.gradle.gradleVersion).compareTo(GradleVersion.version('4.4.1')) > 0) {
+    compileGroovy.dependsOn = compileGroovy.taskDependencies.mutableValues - 'compileJava'
+} else {
+    compileGroovy.dependsOn = compileGroovy.taskDependencies.values - 'compileJava'
+}
+compileKotlin.dependsOn compileGroovy
+compileKotlin.classpath += files(compileGroovy.destinationDir)*/
