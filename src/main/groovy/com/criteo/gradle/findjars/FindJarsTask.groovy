@@ -1,5 +1,7 @@
 package com.criteo.gradle.findjars
 
+import com.criteo.gradle.findjars.conflicts.ConflictingJars
+import com.criteo.gradle.findjars.conflicts.EntriesInMultipleJars
 import com.criteo.gradle.findjars.lookup.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -54,11 +56,11 @@ class FindJarsTask extends DefaultTask {
     }
 
     private void reportConflicts(Collection<JarFileAndEntry> jarFileAndEntry) {
-        Map<String, Set<String>> conflicts = Conflicts.entriesInMultipleJars(jarFileAndEntry)
-        if (conflicts.isEmpty()) {
+        EntriesInMultipleJars entries = new EntriesInMultipleJars(jarFileAndEntry)
+        if (entries.isEmpty()) {
             logger.lifecycle("No conflicts found.")
         } else {
-            Map<ConflictingJars, Set<String>> factorizedConflicts = Conflicts.factorize(conflicts)
+            Map<ConflictingJars, Set<String>> factorizedConflicts = entries.factorize()
             for (Map.Entry<ConflictingJars, Set<String>> entry: factorizedConflicts) {
                 Set<String> jars = entry.getKey().getJars()
                 logger.lifecycle("Jars:")

@@ -1,4 +1,4 @@
-package com.criteo.gradle.findjars.lookup
+package com.criteo.gradle.findjars.conflicts
 
 class ConflictingJars {
     Set<String> conflictingJars
