@@ -2,9 +2,10 @@ package com.criteo.gradle.findjars
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
-import org.gradle.api.tasks.Optional
+import org.gradle.internal.impldep.org.apache.commons.codec.digest.DigestUtils
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -34,22 +35,13 @@ class FindJarsTask extends DefaultTask {
             description = "Find jars that contain files with the same path (com/criteo/my.class) with different content (default=false).")
     boolean findConflicts
 
-    @Input
-    @Optional
-    @Option(option = "contains-import",
-            description = "Find jars that import a class whose path (com/criteo/my.class) matches a given substring.")
-    String containsImport
-
     @TaskAction
     void run() {
         Collection<JarFileAndEntry> jarFileAndEntry = collectJarFileAndEntry()
         if (findConflicts) {
             reportConflicts(jarFileAndEntry)
         }
-        if (containsImport != null) {
-            reportImports(jarFileAndEntry)
-        }
-        if (!findConflicts && containsImport == null) {
+        if (findConflicts != null) {
             reportFoundJars(jarFileAndEntry)
         }
     }
@@ -92,34 +84,6 @@ class FindJarsTask extends DefaultTask {
         }
         if (addThreeDots) {
             logger.lifecycle(" - ... (${length - maxClasses} more)")
-        }
-    }
-
-    private void reportImports(Collection<JarFileAndEntry> jarFileAndEntries) {
-        Set<String> result = new HashSet<>()
-        for (JarFileAndEntry jarFileAndEntry : jarFileAndEntries) {
-            JarFileAndPath jarFile = jarFileAndEntry.getJarFile()
-            JarEntry entry = jarFileAndEntry.getJarEntry()
-            String name = entry.getName()
-            File path = new File(new File(project.buildDir, "findJars"), name)
-            if (!extractJarEntry(path, jarFile.getJarFile(), entry)) {
-                continue
-            }
-            if (hasImport(path, containsImport)) {
-                String jarPath = jarFileAndEntry.getJarPath()
-                if (!result.contains(jarPath)) {
-                    logger.info("Found import at path:${jarPath}@${name}")
-                    result.add(jarPath)
-                }
-            }
-        }
-        if (result.isEmpty()) {
-            logger.lifecycle("Did not find any jar importing ${containsImport}")
-        } else {
-            logger.lifecycle("The jars below import '${containsImport}'")
-            result.each {
-                logger.lifecycle("- $it")
-            }
         }
     }
 
@@ -226,51 +190,6 @@ class FindJarsTask extends DefaultTask {
 
     private boolean filterJarName(String name) {
         return name.matches(jarFilter)
-    }
-
-    private static boolean hasImport(File pathToClass, String importPath) {
-        def command = ['/bin/bash',
-                       '-c',
-                       "javap -v ${pathToClass.toPath().toString()} | grep ${importPath}"]
-        def proc = command.execute()
-        proc.waitFor()
-        proc.exitValue() == 0
-    }
-
-    private boolean extractJarEntry(File output, JarFile jar, JarEntry entry) {
-        if (output.exists()) {
-            return true
-        }
-        if (isDirectory(entry)) {
-            return true
-        }
-        try {
-            if (!mkParentDirs(output)) {
-                logger.error("Could not create parent directory of ${entry.getName()}")
-                return false
-            }
-            new BufferedInputStream(jar.getInputStream(entry)).withCloseable { input ->
-                new BufferedOutputStream(new FileOutputStream(output)).withCloseable { out ->
-                    out << input
-                }
-            }
-            return true
-        } catch (Exception e) {
-            logger.error("Could not extract ${entry.getName()}", e)
-            return false
-        }
-    }
-
-    private static boolean isDirectory(JarEntry jarEntry) {
-        jarEntry.getName().endsWith("/")
-    }
-
-    private static boolean mkParentDirs(File output) {
-        File parent = new File(output.getParent())
-        if (parent.exists()) {
-            return true
-        }
-        return parent.mkdirs()
     }
 
     private class JarFileAndPath {
