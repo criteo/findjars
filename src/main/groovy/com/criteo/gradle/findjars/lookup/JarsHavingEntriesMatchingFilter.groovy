@@ -1,7 +1,7 @@
 package com.criteo.gradle.findjars.lookup
 
+
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.logging.Logger
 
 import java.util.jar.JarEntry
@@ -9,8 +9,9 @@ import java.util.jar.JarEntry
 class JarsHavingEntriesMatchingFilter {
 
     static Collection<JarFileAndEntry> collect(Project project,
-                                               Configuration configuration, String jarFilter,
-                                               Logger logger)
+                                               String configuration,
+                                               Logger logger,
+                                               String jarFilter)
     {
         Collection<JarFileAndEntry> res = new ArrayList<>()
         if (project.configurations.findAll { it.name == configuration }.isEmpty()) {
