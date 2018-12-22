@@ -1,4 +1,5 @@
-package com.criteo.gradle.findjars
+package com.criteo.gradle.findjars.lookup
+
 
 import java.util.jar.JarEntry
 

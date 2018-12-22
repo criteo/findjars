@@ -1,5 +1,8 @@
 package com.criteo.gradle.findjars
 
+import com.criteo.gradle.findjars.lookup.ConflictingJars
+import com.criteo.gradle.findjars.lookup.JarFileAndEntry
+import com.criteo.gradle.findjars.lookup.JarFileAndPath
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
