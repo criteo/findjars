@@ -2,10 +2,12 @@ package com.criteo.gradle.findjars.conflicts
 
 import com.criteo.gradle.findjars.lookup.JarFileAndEntry
 import com.criteo.gradle.findjars.lookup.JarFileAndPath
+import groovy.transform.CompileStatic
 import org.gradle.internal.impldep.org.apache.commons.codec.digest.DigestUtils
 
 import java.util.jar.JarEntry
 
+@CompileStatic
 class EntriesInMultipleJars {
     private Map<String, Set<String>> entriesInMultipleJars = new HashMap<>()
 
@@ -18,20 +20,20 @@ class EntriesInMultipleJars {
     }
 
     Map<ConflictingJars, Set<String>> factorize() {
-        Map<ConflictingJars, Collection<String>> res = new HashMap<>()
+        Map<ConflictingJars, Set<String>> res = new HashMap<>()
         entriesInMultipleJars.each {
              key , value ->
             ConflictingJars newKey = new ConflictingJars(value)
-            Collection<String> related = res.getOrDefault(newKey, [])
+            Set<String> related = res.getOrDefault(newKey, new HashSet<>())
             related.add(key)
             res[newKey] = related
         }
-        res
+        (Map<ConflictingJars, Set<String>>)res.collectEntries {key, value -> [key: value.toSet()] }
     }
 
     private static Map<String, Set<String>> build(Collection<JarFileAndEntry> entries) {
         Map<String, Set<JarFileAndEntry>> entriesToJars = findEntriesWithSamePathInDifferentJars(entries)
-        Map<String, Map<Long, JarFileAndPath>> entriesPerDigest = new HashMap<>()
+        Map<String, Map<String, Set<JarFileAndPath>>> entriesPerDigest = new HashMap<>()
         for (Map.Entry<String, Set<JarFileAndEntry>> entryToJars: entriesToJars) {
             Map<String, Set<JarFileAndPath>> jarsGroupedByEntriesDigest = new HashMap<>()
             for (JarFileAndEntry entry : entryToJars.getValue()) {
@@ -42,11 +44,11 @@ class EntriesInMultipleJars {
             }
             entriesPerDigest[entryToJars.getKey()] = jarsGroupedByEntriesDigest
         }
-        entriesPerDigest.findAll { className, perDigest ->
+        (Map<String, Set<String>>) entriesPerDigest.findAll { className, perDigest ->
             perDigest.keySet().size() > 1
         }.collectEntries { key, value ->
             Collection<Set<JarFileAndPath>> values = value.values()
-            Set<String> paths = values.collectMany { val -> val.collect { it.getJarPath() } }
+            Set<String> paths = values.collectMany { val -> val.collect { it.getJarPath() } }.toSet()
             [(key): paths]
         }
     }
