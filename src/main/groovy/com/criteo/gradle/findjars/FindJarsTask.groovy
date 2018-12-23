@@ -3,7 +3,6 @@ package com.criteo.gradle.findjars
 import com.criteo.gradle.findjars.conflicts.ConflictingJars
 import com.criteo.gradle.findjars.conflicts.EntriesInMultipleJars
 import com.criteo.gradle.findjars.lookup.JarFileAndEntry
-import com.criteo.gradle.findjars.lookup.JarsHavingEntriesMatchingFilter
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -39,7 +38,7 @@ class FindJarsTask extends DefaultTask {
 
     @TaskAction
     void run() {
-        Collection<JarFileAndEntry> jarFileAndEntry = JarsHavingEntriesMatchingFilter.collect(project, configuration, logger, jarFilter)
+        Collection<JarFileAndEntry> jarFileAndEntry = JarFileAndEntry.scan(project, configuration, logger, jarFilter)
         if (findConflicts) {
             reportConflicts(jarFileAndEntry)
         }
