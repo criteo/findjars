@@ -62,8 +62,8 @@ class FindJarsTask extends DefaultTask {
         if (entries.isEmpty()) {
             logger.lifecycle("No conflicts found.")
         } else {
-            Map<ConflictingJars, Set<String>> factorizedConflicts = entries.factorize()
-            for (Map.Entry<ConflictingJars, Set<String>> entry: factorizedConflicts) {
+            Map<ConflictingJars, List<String>> factorizedConflicts = entries.factorize()
+            for (Map.Entry<ConflictingJars, List<String>> entry: factorizedConflicts) {
                 Set<String> jars = entry.getKey().getJars()
                 logger.lifecycle("Jars:")
                 jars.each {

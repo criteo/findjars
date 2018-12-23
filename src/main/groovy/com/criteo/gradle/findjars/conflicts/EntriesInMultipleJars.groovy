@@ -3,7 +3,7 @@ package com.criteo.gradle.findjars.conflicts
 import com.criteo.gradle.findjars.lookup.JarFileAndEntry
 import com.criteo.gradle.findjars.lookup.JarFileAndPath
 import groovy.transform.CompileStatic
-import org.gradle.internal.impldep.org.apache.commons.codec.digest.DigestUtils
+import org.apache.commons.codec.digest.DigestUtils
 
 import java.util.jar.JarEntry
 
@@ -19,7 +19,7 @@ class EntriesInMultipleJars {
         entriesInMultipleJars.isEmpty()
     }
 
-    Map<ConflictingJars, Set<String>> factorize() {
+    Map<ConflictingJars, List<String>> factorize() {
         Map<ConflictingJars, Set<String>> res = new HashMap<>()
         entriesInMultipleJars.each { key , value ->
             ConflictingJars newKey = new ConflictingJars(value)
@@ -27,7 +27,7 @@ class EntriesInMultipleJars {
             related.add(key)
             res[newKey] = related
         }
-        (Map<ConflictingJars, Set<String>>)res.collectEntries {key, value -> [(key): value.toSet()] }
+        (Map<ConflictingJars, List<String>>)res.collectEntries {key, value -> [(key): value.toSet().sort()] }
     }
 
     private static Map<String, Set<String>> build(Collection<JarFileAndEntry> entries) {

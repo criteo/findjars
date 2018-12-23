@@ -20,6 +20,10 @@ plugins {
     id 'java-gradle-plugin'
 }
 
+repositories {
+    mavenCentral()
+}
+
 apply plugin:'groovy'
 
 def descriptionText = 'Tool for finding jars in a given configuration.'
@@ -28,16 +32,39 @@ description descriptionText
 dependencies {
     compileOnly gradleApi()
     compileOnly localGroovy()
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.9'
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
+        exclude group: 'org.codehaus.groovy'
+    }
+    testImplementation 'junit:junit:4.12'
+    testImplementation gradleTestKit()
+}
+
+sourceSets {
+    functionalTest {
+        groovy.srcDir file('src/functTest/groovy')
+        compileClasspath += sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+task functionalTest(type: Test) {
+    description = 'Runs the functional tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    classpath = sourceSets.functionalTest.runtimeClasspath
 }
 
 gradlePlugin {
     plugins {
         workspace {
             id = 'com.criteo.gradle.findjars'
-            implementationClass = 'com.criteo.gradle.WorkspacePlugin'
+            implementationClass = 'com.criteo.gradle.findjars.FindJarsPlugin'
         }
     }
+    testSourceSets sourceSets.functionalTest
 }
+
 
 /*pluginBundle {
     website = 'TODO'
