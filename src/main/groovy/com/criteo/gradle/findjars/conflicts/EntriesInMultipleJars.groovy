@@ -62,7 +62,7 @@ class EntriesInMultipleJars {
             perDigest.keySet().size() > 1
         }.collectEntries { key, value ->
             Collection<Set<JarFileAndPath>> values = value.values()
-            Set<String> paths = values.collectMany { val -> val.collect { it.getJarPath() } }.toSet()
+            Set<String> paths = (values.collectMany { val -> (Collection<String>)val.collect { it.getJarPath() } }).toSet()
             [(key): paths]
         }
     }
