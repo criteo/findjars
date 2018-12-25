@@ -83,7 +83,7 @@ class FindJarsTest {
     // https://youtrack.jetbrains.com/issue/KT-2425
     // for now, '$' should be written as ${"$"} in string templates
     val protobufConflicts = """
-        conflict on: 
+        conflict on:
          - com/google/protobuf/AbstractMessage${"$"}Builder.class
          - com/google/protobuf/AbstractMessage.class
          - com/google/protobuf/AbstractMessageLite${"$"}Builder${"$"}LimitedInputStream.class

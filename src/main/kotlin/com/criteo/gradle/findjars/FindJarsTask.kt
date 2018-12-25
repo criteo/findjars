@@ -58,7 +58,7 @@ open class FindJarsTask : DefaultTask() {
                 key.jars.forEach {
                     logger.lifecycle("- $it")
                 }
-                logger.lifecycle("conflict on: ")
+                logger.lifecycle("conflict on:")
                 reportConflictingClasses(value)
             }
         }
