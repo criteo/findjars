@@ -7,7 +7,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   ./gradlew build functionalTest $SWITCHES
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" == "" ]; then
   echo -e 'Build Branch with Snapshot => Branch ['$TRAVIS_BRANCH']'
-  echo "TODO"
+  ./gradlew build functionalTest $SWITCHES
 elif [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_TAG" != "" ]; then
   echo -e 'Build Branch for Release => Branch ['$TRAVIS_BRANCH']  Tag ['$TRAVIS_TAG']'
   case "$TRAVIS_TAG" in
