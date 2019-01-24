@@ -1,4 +1,4 @@
-# Findjars: a tool to debug gradle classpath
+# Findjars: a tool to debug gradle classpath issues
 
 [![Build Status](https://travis-ci.org/criteo/findjars.svg?branch=master)](https://travis-ci.org/criteo/findjars)
 
