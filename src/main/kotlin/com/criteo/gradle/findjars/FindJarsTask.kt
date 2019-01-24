@@ -42,7 +42,7 @@ open class FindJarsTask : DefaultTask() {
             logger.lifecycle("Did not find any jar")
         } else {
             jarFileAndEntry.map { it.jar }.distinct().forEach {
-                logger.lifecycle("- ${it}")
+                logger.lifecycle("- ${it.jarPath}")
             }
         }
     }
