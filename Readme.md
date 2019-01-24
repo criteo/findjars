@@ -31,7 +31,7 @@ We first install gradlew
 $ gradle wrapper
 ```
 We can find the jars that contain protobuf classes with
-```sh
+```
 $ ./gradlew findJars --contains "com/google/protobuf/.*class" --configuration compile
 ...
 > Task :findJars
@@ -57,7 +57,7 @@ conflict on:
 ```
 
 All the conflicts can be found with:
-```sh
+```
 $ ./gradlew findJars --find-conflicts --configuration compile
 ...
 > Task :findJars
