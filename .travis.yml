@@ -11,4 +11,4 @@ env:
   global:
     secure: GrMtXokKKioygqxUYuvEY44D9zmnEs7bSKZQIIBSGx1K1LnmlxWcirRYa5dzZL2YGoZMWfvCURYSRhT67YRh6rqW/pUwX9Ykw6pSsn0KVCRibStVys5GVUiGIQEGjbr5OEYAmCnwXLhZtiedFKd9rgA29CsqFb+TZJfKAKG9PBBhx+wQilyOR0BtBE9R6tYcklRaeH/h6Jdq0KM043oneaXQ60KVXZvC8UMYUDwyySi5edNIlLihCro/oIKZzJv5tcum4fG69Z3Lt1tX+dobypVozIaeQRhaQRe2HeoOpjxjrDzggh7GzryERX1irahQHGGy3w20snvuZEAkvDl8Y1nzaFWfGVtNEZhGjww4qypgCT7QNZGRLk3dXn85SBLknJbaQYaIFVkpKPhVcF7FrzPvHfPOBMO77rQjYrPkhUL+32TedDQ0nvD6XZxiVD0asfPlh9AXoJXF/J5dNBPVpRZl3ycmVHp9YnuTC/DMBtwycyErXT3bvB6wh00Q1PxDORJC6TBAeSBu4/URs/CaNiS/qvd6EvHfgP3bFor3dIun8rnCSWa/vnzk62ncIS/8kN5vx2gTzJrLLpoSrKwzAHxD3bpQwRVgv+wB+q7MMrQMMrlWxct/WVNmZ40V1Lt0DYC2c6lzWwiJZFsQIXIRzJcubcwqKRoMelkbmKHdeIk=
 before_install:
-- test $TRAVIS_PULL_REQUEST = false && openssl aes-256-cbc -k "$gradle_properties_password" -in .travis/gradle.properties.enc -out gradle.properties -d || true
+- test $TRAVIS_PULL_REQUEST = false && openssl aes-256-cbc -k "$gradle_properties_password" -in .travis/gradle.properties.enc -out gradle.properties -d
