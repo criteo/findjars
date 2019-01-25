@@ -39,7 +39,6 @@ data class JarFileAndEntry(val jar: JarFileAndPath, val entry: JarEntry) {
                         val name = entry.getName()
                         if (filterJarName(name, jarFilterRegex)) {
                             res.add(JarFileAndEntry(jar, entry))
-                            continue
                         }
                     }
                 } catch (e: Exception) {
