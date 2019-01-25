@@ -8,6 +8,6 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 before_install:
-- test $TRAVIS_PULL_REQUEST = false && openssl aes-256-cbc -K $encrypted_4d8e3db26b81_key
+- openssl aes-256-cbc -K $encrypted_4d8e3db26b81_key
   -iv $encrypted_4d8e3db26b81_iv -in .travis/gradle.properties.enc -out gradle.properties
   -d
