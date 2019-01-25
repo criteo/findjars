@@ -1,8 +1,8 @@
-# Findjars: a tool to debug gradle classpath issues
+# Findjars: a gradle plugin to debug classpath issues
 
 [![Build Status](https://travis-ci.org/criteo/findjars.svg?branch=master)](https://travis-ci.org/criteo/findjars)
 
-Findjars is a tool that helped Criteo debugging classpath issues when migrating from maven to gradle.
+Findjars is a gradle plugin that helped Criteo debugging classpath issues when migrating from maven to gradle.
 
 The tool permits to find:
 * which jars contain a file identified by its path,
