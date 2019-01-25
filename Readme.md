@@ -4,7 +4,7 @@
 
 Findjars is a gradle plugin that helped Criteo debugging classpath issues when migrating from maven to gradle.
 
-The tool permits to find:
+It permits to find:
 * which jars contain a file identified by its path,
 * conflicts among the jars selected above, a conflict being a file with the same path present in two different jars with a different digest.
 
@@ -39,7 +39,7 @@ $ ./gradlew findJars --contains "com/google/protobuf/.*class" --configuration co
 - /<pathToCache>/com.google.protobuf/protobuf-java/3.6.1/<digest>/protobuf-java-3.6.1.jar
 ```
 
-We can check whether there are conflicts there with
+We can check whether there are conflicts with
 ```
 $ ./gradlew findJars --find-conflicts --configuration compile --contains "com/google/protobuf/.*.class"
 ...
