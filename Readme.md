@@ -12,7 +12,7 @@ More precisely, let's take as example the following `build.gradle` that uses the
 ```sh
 $ cat build.gradle
 plugins {
-  id 'com.criteo.gradle.findjars'
+  id 'com.criteo.gradle.findjars' version '0.1'
 }
 
 apply plugin: 'java-library'
