@@ -93,3 +93,8 @@ conflict on:
  - ... (380 more)
 ...
 ```
+
+The available options can be listed with:
+```
+./gradlew help --task findJars
+```
